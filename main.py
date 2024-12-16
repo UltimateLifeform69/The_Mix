@@ -55,3 +55,26 @@ def product_page(product_id):
 
 
     return product_id
+
+@app.route("/sign_up", methods=["POST","GET"])
+def sign_up():
+    if request.method == 'POST':
+        first_name = request.form["First_name"]
+        last_name = request.form["Last_name"]
+        username = request.form["Username"]
+        address = request.form["address"]
+        email = request.form["Email"]
+        password = request.form["Password"]
+    
+        conn = connect_db()
+
+        cursor = conn.cursor()
+
+        cursor.execute(f"""
+        INSERT INTO `Customer`
+            (`first_name`,`last_name`,`username`,`address`,`email`,`password`,)
+            VALUES
+                ( '{first_name}', '{last_name}', '{username}', '{address}', '{email}', '{password}' );
+        """)
+        return redirect("/signin")
+    return render_template("sign_up.html.jinja")
