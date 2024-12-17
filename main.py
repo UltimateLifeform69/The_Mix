@@ -69,12 +69,20 @@ def sign_up():
         conn = connect_db()
 
         cursor = conn.cursor()
-
-        cursor.execute(f"""
-        INSERT INTO `Customer`
-            (`first_name`,`last_name`,`username`,`address`,`email`,`password`,)
-            VALUES
-                ( '{first_name}', '{last_name}', '{username}', '{address}', '{email}', '{password}' );
-        """)
-        return redirect("/signin")
+        try:
+            cursor.execute(f"""
+            INSERT INTO `Customer`
+                (`first_name`,`last_name`,`username`,`address`,`email`,`password`,)
+                VALUES
+                    ( '{first_name}', '{last_name}', '{username}', '{address}', '{email}', '{password}' );
+            """)
+        except pymysql.err.IntegrityError:
+            print("There is someone with that same username in the database ")
+            return render_template("sign_up.html.jinja")
+        else:
+            return redirect("/sign_up")
+        finally:
+            cursor.close()
+            conn.close()
+        
     return render_template("sign_up.html.jinja")

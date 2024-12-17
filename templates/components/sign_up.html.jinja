@@ -7,26 +7,31 @@
     <title>Document</title>
 </head>
 <body>
+{%for message in get_flashed_messages()%}
+<div class="alert alert-primary" role="alert">
+  {{message}}
+</div>
+{%endfor%}
 <form action="/sign_up" method="post">
 <div class="col-sm-6">
     <label for="First_name" class="form-label">First Name</label>
-    <input type="email" class="form-control" id="First_name" aria-describedby="emailHelp" required>
+    <input type="email" class="form-control" id="First_name" name="first_name" aria-describedby="emailHelp" required value="{{request.form.get('first_name','')}}">
   </div>
 <div class="col-sm-6">
     <label for="Last_name" class="form-label">Last Name</label>
-    <input type="email" class="form-control" id="Last_name" aria-describedby="emailHelp" required>
+    <input type="email" class="form-control" id="Last_name" name="last_name" aria-describedby="emailHelp" required value="{{request.form.get('last_name','')}}">
   </div>
   <div class="mb-3">
     <label for="Username" class="form-label">Username</label>
-    <input type="email" class="form-control" id="Username" aria-describedby="emailHelp" required>
+    <input type="email" class="form-control" id="Username" name="Username" aria-describedby="emailHelp" required value="{{request.form.get('Username','')}}">
   </div>
 <div class="mb-3">
     <label for="address" class="form-label">address</label>
-    <input type="email" class="form-control" id="address" aria-describedby="emailHelp" required>
+    <input type="email" class="form-control" id="address" name="address" aria-describedby="emailHelp" required value="{{request.form.get('address','')}}">
   </div>
   <div class="mb-3">
     <label for="Email" class="form-label">Email address</label>
-    <input type="email" class="form-control" id="Email" aria-describedby="emailHelp" required>
+    <input type="email" class="form-control" id="Email" name="email" aria-describedby="emailHelp" required value="{{request.form.get('email','')}}">
     <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
   </div>
   <div class="mb-3">
