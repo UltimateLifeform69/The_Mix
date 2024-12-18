@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="mb-3">
+    <label for="Username" class="form-label">Username</label>
+    <input type="email" class="form-control" id="Username" name="Username" aria-describedby="emailHelp" required value="{{request.form.get('Username','')}}">
+  </div>
+  <div class="mb-3">
+    <label for="Password" class="form-label">Password</label>
+    <input type="password" class="form-control" id="Password" required>
+  </div>
+</body>
+</html>
