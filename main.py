@@ -3,6 +3,9 @@ import pymysql
 from dynaconf import Dynaconf
 from flask import request
 import flask_login
+from flask import flash
+from flask import redirect
+from flask import abort
 app = Flask(__name__)
 
 conf = Dynaconf(
@@ -14,6 +17,7 @@ app.secrect_key = conf.secret_key
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
+login_manager.login_view=('/signin')
 
 class User:
     is_authenticated = True
@@ -28,15 +32,18 @@ class User:
         self. last_name = last_name
     def get_id(self):
         return str(self.id)
-    
-    def load_user(user_id):
-        conn = connect_db()
-        cursor = conn.cursor()
-        result = cursor.fetchone()
 
-        cursor.close()
-        conn.close()
+@login_manager.user_loader
+def load_user(user_id):
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT * FROM `Customer` WHERE `id` = {user_id};")
+    result = cursor.fetchone()
 
+    cursor.close()
+    conn.close()
+
+    if result is not None:
         return User(result["id"], result["username"], result["email"], result["first_name"], result["last_name"])
 
 
@@ -87,6 +94,9 @@ def product_page(product_id):
     cursor.close
     conn.close
 
+    if result is None:
+        abort(404)
+
 
     return product_id
 
@@ -118,16 +128,20 @@ def sign_up():
         finally:
             cursor.close()
             conn.close()
+    return render_template
+    
 
 @app.route("/signin", methods = ["POST", "GET"])
 def sign_in():
+    if flask_login.current_user.is_authenticated:
+        return redirect("/")
     username = request.form["Username"].strip
     password = request.form["Password"]
 
     conn = connect_db()
     cursor = conn.cursor()
 
-    cursor.execute(f"SELECT * FROM `Custoner` WHERE `username` = '{username}';")
+    cursor.execute(f"SELECT * FROM `Customer` WHERE `username` = '{username}';")
 
     result = cursor.fetchone()
 
@@ -143,5 +157,12 @@ def sign_in():
 
 @app.route('/logout')
 def logout():
+    if flask_login.current_user.is_authenticated:
+        return redirect("/")
     flask_login.logout_user()
     return redirect('/')
+
+@app.route('/cart')
+@flask_login.login_required
+def cart():
+    return "cart page"
