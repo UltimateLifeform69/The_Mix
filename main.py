@@ -100,6 +100,19 @@ def product_page(product_id):
 
     return product_id
 
+@app.route("/product/<product_id>/cart")
+@flask_login.login_required
+def add_to_cart(product_id):
+    conn = connect_db()
+
+    cursor = conn.cursor()
+    cursor.execute(f" INSERT INTO `cart` WHERE `id` = {product_id}")
+    result = cursor.fetchall()
+
+    cursor.close
+    conn.close
+    
+
 @app.route("/sign_up", methods=["POST","GET"])
 def sign_up():
     if request.method == 'POST':
