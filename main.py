@@ -191,3 +191,59 @@ def cart():
     conn.close
 
     return render_template("cart.html.jinja", products=results)
+
+@app.route("/cart/<acrt_id>/del", methods=["POST"])
+@flask_login.login_required 
+def add_to_cart(product_id):
+    qty = request.form['qty']
+    customer_id = flask_login.current_user.id
+
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    
+    cursor.execute(f"INSERT INTO `cart` (`product_id`, `costumer_id`, `qty`) VALUES ({product_id}, {customer_id}, {qty}) ")
+
+
+    cursor.close
+    conn.close
+
+    return redirect("/cart")
+
+
+@app.route("/cart/<acrt_id>/del", methods=["POST"])
+@flask_login.login_required 
+def delete_cart(cart_id):
+
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    
+    cursor.execute(f"DELETE FROM `cart` WHERE `id` = {cart_id} ;")
+
+    results = cursor.fetchall()
+
+    cursor.close
+    conn.close
+
+    return redirect("/cart")
+
+
+@app.route("/cart/<acrt_id>/update", methods=["POST"])
+@flask_login.login_required 
+def update_cart(cart_id):
+
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    qty=request.form['qty']
+
+    
+    cursor.execute(f"UPDATE `cart` SET `qty` = {qty} WHERE `id` = {cart_id} ;")
+
+    results = cursor.fetchall()
+
+    cursor.close
+    conn.close
+
+    return redirect("/cart")
