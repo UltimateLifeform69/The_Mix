@@ -229,7 +229,7 @@ def delete_cart(cart_id):
     return redirect("/cart")
 
 
-@app.route("/cart/<acrt_id>/update", methods=["POST"])
+@app.route("/cart/<acrt_id>/update", methods=["POST", "GET"])
 @flask_login.login_required 
 def update_cart(cart_id):
 
@@ -246,4 +246,22 @@ def update_cart(cart_id):
     cursor.close
     conn.close
 
+
     return redirect("/cart")
+
+@app.route('/checkout')
+@flask_login.login_required
+def checkout():
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    customer_id = flask_login.current_user.id
+    
+    cursor.execute(f"SELECT `name`, `price`, `qty`, `image`, `product_id`, `cart`. `id` FROM `cart` JOIN `product` ON `product_id` = `product`. `id` WHERE `costumer_id` = {customer_id};")
+
+    results = cursor.fetchall()
+
+    cursor.close
+    conn.close
+
+    return render_template("cart.html.jinja", products=results)
