@@ -192,9 +192,9 @@ def cart():
 
     return render_template("cart.html.jinja", products=results)
 
-@app.route("/cart/<acrt_id>/del", methods=["POST"])
+@app.route("/cart/<cart_id>/add", methods=["POST"])
 @flask_login.login_required 
-def add_to_cart(product_id):
+def move_to_cart(product_id):
     qty = request.form['qty']
     customer_id = flask_login.current_user.id
 
@@ -249,15 +249,16 @@ def update_cart(cart_id):
 
     return redirect("/cart")
 
-@app.route('/checkout')
+@app.route('/checkout', methods=["POST","GET"])
 @flask_login.login_required
 def checkout():
     conn = connect_db()
     cursor = conn.cursor()
+    sale_id = cursor.lastrowid
 
     customer_id = flask_login.current_user.id
     
-    cursor.execute(f"SELECT `name`, `price`, `qty`, `image`, `product_id`, `cart`. `id` FROM `cart` JOIN `product` ON `product_id` = `product`. `id` WHERE `costumer_id` = {customer_id};")
+    cursor.execute(f"INSERT INTO `sale_product` (`customer_id`, `product_id`, `qty`) VALUES ('{customer_id}', '{sale_id}') ;")
 
     results = cursor.fetchall()
 
@@ -265,3 +266,21 @@ def checkout():
     conn.close
 
     return render_template("cart.html.jinja", products=results)
+
+@app.route("/product/<product_id>/review", methods=["POST", "GET"])
+@flask_login.login_required 
+def move_to_cart(product_id):
+    review_rating = request.form['rating']
+    customer_id = flask_login.current_user.id
+
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    
+    cursor.execute(f"INSERT INTO `review` (`product_id`, `costumer_id`, `rating`) VALUES ({product_id}, {customer_id}, {review_rating}) ")
+
+
+    cursor.close
+    conn.close
+
+    return redirect("/product")

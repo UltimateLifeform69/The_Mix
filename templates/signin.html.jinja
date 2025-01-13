@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
+{%include "components/navbar.html.jinja"%}
     <div class="mb-3">
     <label for="Username" class="form-label">Username</label>
     <input type="email" class="form-control" id="Username" name="Username" aria-describedby="emailHelp" required value="{{request.form.get('Username','')}}">
