@@ -91,14 +91,19 @@ def product_page(product_id):
     cursor.execute(f"SELECT * FROM `Product` WHERE `id` = {product_id}")
     result = cursor.fetchone()
 
-    cursor.close
-    conn.close
 
     if result is None:
         abort(404)
 
+    cursor.execute(f"""
 
-    return product_id
+        SELECT ``,`username`, `review`, `rating` FROM `review` JOIN `customer` ON  WHERE `product_id` = '{product_id}' AND
+    
+    """)
+    review = cursor.fetchall()
+
+    cursor.close
+    conn.close
 
 @app.route("/product/<product_id>/cart")
 @flask_login.login_required
@@ -277,7 +282,7 @@ def move_to_cart(product_id):
     cursor = conn.cursor()
 
     
-    cursor.execute(f"INSERT INTO `review` (`product_id`, `costumer_id`, `rating`) VALUES ({product_id}, {customer_id}, {review_rating}) ")
+    cursor.execute(f"INSERT INTO `review` (`product_id`, `costumer_id`, `rating`) VALUES ({product_id}, {customer_id}, {rating}) ")
 
 
     cursor.close

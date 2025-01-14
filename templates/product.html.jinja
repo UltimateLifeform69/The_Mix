@@ -36,7 +36,28 @@
   </div>
 </div>
 
-  <h3>Comments</h3>
+<div class="col-8 ms-auto">
+  <select name="rating" class="form-select" aria-label="Default select example">
+  <option selected>Rate the Product</option>
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+  </select>
+
+</div>
+
+  <h3>reviews</h3>
+  {%for comments in reviews%}
+  <div class="card mx-auto" style="">
+  <div class="card-body">
+    <h5 class="card-title">{{username}}</h5>
+    <h6 class="card-subtitle mb-2 text-body-secondary">{{review}}</h6>
+    <p class="card-text">{{comment}}</p>
+  </div>
+  {%endfor%}
+</div>
 
   <input type="number" id="rate" name="rating" min="1" max="5">
   <input type="text" id="comm" name="comment">
