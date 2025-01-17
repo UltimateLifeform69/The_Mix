@@ -88,7 +88,7 @@ def product_page(product_id):
     conn = connect_db()
 
     cursor = conn.cursor()
-    cursor.execute(f"SELECT * FROM `Product` WHERE `id` = {product_id}")
+    cursor.execute(f"SELECT * FROM `product` WHERE `id` = {product_id}")
     result = cursor.fetchone()
 
 
@@ -97,13 +97,14 @@ def product_page(product_id):
 
     cursor.execute(f"""
 
-        SELECT ``,`username`, `review`, `rating` FROM `review` JOIN `customer` ON  WHERE `product_id` = '{product_id}' AND
+        SELECT `review`,`username`, `review`, `rating` FROM `review` JOIN `customer` ON  WHERE `product_id` = '{product_id}' AND
     
     """)
     review = cursor.fetchall()
 
     cursor.close
     conn.close
+    return render_template("product.html.jinja",product=result, review=review )
 
 @app.route("/product/<product_id>/cart")
 @flask_login.login_required
@@ -259,33 +260,26 @@ def update_cart(cart_id):
 def checkout():
     conn = connect_db()
     cursor = conn.cursor()
-    sale_id = cursor.lastrowid
-
-    customer_id = flask_login.current_user.id
     
-    cursor.execute(f"INSERT INTO `sale_product` (`customer_id`, `product_id`, `qty`) VALUES ('{customer_id}', '{sale_id}') ;")
+    cursor.execute(f'SELECT * FROM `cart`')
 
-    results = cursor.fetchall()
+    cart = cursor.fetchall()
 
-    cursor.close
-    conn.close
-
-    return render_template("cart.html.jinja", products=results)
-
-@app.route("/product/<product_id>/review", methods=["POST", "GET"])
-@flask_login.login_required 
-def move_to_cart(product_id):
-    review_rating = request.form['rating']
-    customer_id = flask_login.current_user.id
-
-    conn = connect_db()
-    cursor = conn.cursor()
-
+    cursor.execute(f""" 
+        INSERT INTO `sale` (`costumer_id`, `status`)
+        VALUES ('{customer_id}', 'pending')
     
-    cursor.execute(f"INSERT INTO `review` (`product_id`, `costumer_id`, `rating`) VALUES ({product_id}, {customer_id}, {rating}) ")
+    """)
+
+    for product in cart:
+
+        cursor.execute(f""" 
+        INSERT INTO `sale_product` (`sale_id`, `product_id`, `qty`)
+        VALUES ('{cursor.lastrowid}', '{product['product_id']}', '{product['qty']}')
+        """)
 
 
     cursor.close
     conn.close
 
-    return redirect("/product")
+    return redirect('/cart')
